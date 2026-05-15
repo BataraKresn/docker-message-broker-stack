@@ -1,0 +1,41 @@
+flowchart TB
+  APP[Application Layer]
+
+  subgraph Redis
+    RM[(Master)]
+    RR[(Replica)]
+    RS[Sentinel]
+    RM --> RR
+    RS --> RM
+  end
+
+  subgraph RabbitMQ
+    RLB[HAProxy AMQP]
+    R1[RabbitMQ-1]
+    R2[RabbitMQ-2]
+    R3[RabbitMQ-3]
+    RLB --> R1
+    RLB --> R2
+    RLB --> R3
+  end
+
+  subgraph Kafka
+    K1[Kafka-1]
+    K2[Kafka-2]
+    K3[Kafka-3]
+  end
+
+  subgraph Observability
+    PROM[Prometheus]
+    GRAF[Grafana]
+    PROM --> GRAF
+  end
+
+  APP --> RM
+  APP --> RLB
+  APP --> K1
+  APP --> K2
+  APP --> K3
+
+  classDef main fill:#F7FAFC,stroke:#4A5568,stroke-width:1px,color:#1A202C;
+  class APP,PROM,GRAF main;

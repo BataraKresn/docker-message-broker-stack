@@ -1,0 +1,11 @@
+flowchart LR
+  APP[App/Worker] -->|Read/Write| RM[(Redis Master)]
+  RM -->|Replication| RR[(Redis Replica)]
+  S1[Sentinel] --> RM
+  S2[Sentinel] --> RM
+  S3[Sentinel] --> RM
+
+  classDef redis fill:#FFE8D6,stroke:#C05621,stroke-width:1px,color:#7B341E;
+  classDef sentinel fill:#E9D8FD,stroke:#6B46C1,stroke-width:1px,color:#44337A;
+  class RM,RR redis;
+  class S1,S2,S3 sentinel;

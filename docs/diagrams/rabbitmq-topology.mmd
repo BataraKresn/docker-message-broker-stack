@@ -1,0 +1,14 @@
+flowchart LR
+  P[Producer] --> LB[HAProxy AMQP :5672]
+  LB --> R1[RabbitMQ-1]
+  LB --> R2[RabbitMQ-2]
+  LB --> R3[RabbitMQ-3]
+
+  R1 --> EX[app.exchange]
+  EX --> Q[app.queue]
+  Q --> C[Consumer]
+  Q --> DLX[app.dlx]
+  DLX --> DLQ[app.dlq]
+
+  classDef rmq fill:#E6FFFA,stroke:#2C7A7B,stroke-width:1px,color:#234E52;
+  class R1,R2,R3,EX,Q,DLX,DLQ rmq;

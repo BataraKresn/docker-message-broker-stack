@@ -1,0 +1,12 @@
+{
+  "name": "rabbitmq-producer-consumer-example",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "amqplib": "^0.10.4"
+  },
+  "scripts": {
+    "producer": "node producer.js",
+    "consumer": "node consumer.js"
+  }
+}

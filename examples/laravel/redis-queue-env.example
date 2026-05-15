@@ -1,0 +1,8 @@
+# Laravel Redis Queue Template
+QUEUE_CONNECTION=redis
+REDIS_HOST=redis
+REDIS_PASSWORD=change_me_redis_password
+REDIS_PORT=6379
+
+# Worker command:
+# php artisan queue:work redis --queue=default --tries=3 --timeout=90

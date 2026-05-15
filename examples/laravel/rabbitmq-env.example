@@ -1,0 +1,10 @@
+# Laravel RabbitMQ Template (using package like vyuldashev/laravel-queue-rabbitmq)
+QUEUE_CONNECTION=rabbitmq
+RABBITMQ_HOST=rabbitmq-lb
+RABBITMQ_PORT=5672
+RABBITMQ_USER=admin
+RABBITMQ_PASSWORD=change_me_rabbitmq_password
+RABBITMQ_VHOST=app
+
+# Worker command:
+# php artisan queue:work rabbitmq --queue=app.queue --tries=3

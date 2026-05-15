@@ -1,0 +1,51 @@
+name: "✨ Feature Request"
+description: Usulan fitur/increment untuk stack message broker
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Terima kasih untuk ide fiturnya.
+        Mohon jelaskan use-case dan dampak operasionalnya.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: Masalah apa yang ingin diselesaikan?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solusi yang diusulkan
+      description: Jelaskan desain/arah implementasi.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: broker
+    attributes:
+      label: Komponen terkait
+      multiple: true
+      options:
+        - Redis
+        - RabbitMQ
+        - Kafka
+        - Monitoring
+        - Documentation
+        - CI/CD
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatif yang sudah dipertimbangkan
+
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risiko / dampak kompatibilitas
+      description: Jelaskan jika ada perubahan breaking atau implikasi keamanan.

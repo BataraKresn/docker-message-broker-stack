@@ -1,0 +1,103 @@
+{
+  "vhosts": [
+    { "name": "app" }
+  ],
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "app",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "app.exchange",
+      "vhost": "app",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "app.dlx",
+      "vhost": "app",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "app.queue",
+      "vhost": "app",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-dead-letter-exchange": "app.dlx"
+      }
+    },
+    {
+      "name": "app.retry",
+      "vhost": "app",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 30000,
+        "x-dead-letter-exchange": "app.exchange",
+        "x-dead-letter-routing-key": "app.created"
+      }
+    },
+    {
+      "name": "app.dlq",
+      "vhost": "app",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "app.exchange",
+      "vhost": "app",
+      "destination": "app.queue",
+      "destination_type": "queue",
+      "routing_key": "app.created",
+      "arguments": {}
+    },
+    {
+      "source": "app.dlx",
+      "vhost": "app",
+      "destination": "app.dlq",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    }
+  ],
+  "policies": [
+    {
+      "name": "quorum-and-dlx",
+      "pattern": "^app\\.",
+      "vhost": "app",
+      "apply-to": "queues",
+      "definition": {
+        "dead-letter-exchange": "app.dlx",
+        "message-ttl": 60000
+      },
+      "priority": 1
+    }
+  ]
+}

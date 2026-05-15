@@ -1,0 +1,36 @@
+name: CI Compose Lint
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  compose-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare env files for CI
+        run: |
+          cp .env.dev.example .env.dev
+          cp .env.prod.example .env.prod
+
+      - name: Validate dev compose
+        run: |
+          docker compose -f docker-compose.dev.yml --env-file .env.dev config > /dev/null
+
+      - name: Validate prod compose
+        run: |
+          docker compose -f docker-compose.prod.yml --env-file .env.prod config > /dev/null
+
+      - name: Validate prod + monitoring compose
+        run: |
+          docker compose -f docker-compose.prod.yml -f docker-compose.monitoring.yml --env-file .env.prod config > /dev/null

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Dokumentasi troubleshooting
+    url: https://github.com/your-org/docker-message-broker-stack/blob/main/docs/troubleshooting.md
+    about: Cek panduan troubleshooting sebelum membuat issue.

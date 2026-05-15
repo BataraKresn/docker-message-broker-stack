@@ -1,0 +1,16 @@
+{
+  "policies": [
+    {
+      "vhost": "app",
+      "name": "durable-quorum",
+      "pattern": "^app\\.",
+      "apply-to": "queues",
+      "definition": {
+        "queue-mode": "default",
+        "dead-letter-exchange": "app.dlx",
+        "message-ttl": 60000
+      },
+      "priority": 1
+    }
+  ]
+}

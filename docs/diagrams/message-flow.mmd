@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph Redis Queue
+    RP[Producer] -->|LPUSH| RL[(redis:list)]
+    RL -->|BRPOP| RW[Worker]
+  end
+
+  subgraph RabbitMQ Flow
+    AP[Producer] --> EX[app.exchange]
+    EX -->|app.created| Q[app.queue]
+    Q --> AC[Consumer]
+    Q -->|fail| DLX[app.dlx]
+    DLX --> DLQ[app.dlq]
+    Q --> RETRY[app.retry]
+    RETRY --> EX
+  end
+
+  subgraph Kafka Flow
+    KP[Producer] --> TOPIC[app-events]
+    TOPIC --> CG1[Consumer Group A]
+    TOPIC --> CG2[Consumer Group B]
+  end
+
+  classDef flow fill:#F0FFF4,stroke:#2F855A,stroke-width:1px,color:#22543D;
+  class EX,Q,DLX,DLQ,RETRY,TOPIC,CG1,CG2,RL flow;

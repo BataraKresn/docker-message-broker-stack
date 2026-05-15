@@ -1,0 +1,18 @@
+flowchart LR
+  P[Producer] --> B1[Kafka-1]
+  P --> B2[Kafka-2]
+  P --> B3[Kafka-3]
+
+  B1 --> T[Topic: app-events]
+  B2 --> T
+  B3 --> T
+
+  T --> CG1[Consumer Group A]
+  T --> CG2[Consumer Group B]
+
+  C1[Controller Role] --> B1
+  C2[Controller Role] --> B2
+  C3[Controller Role] --> B3
+
+  classDef kafka fill:#EBF8FF,stroke:#2B6CB0,stroke-width:1px,color:#1A365D;
+  class B1,B2,B3,T,CG1,CG2 kafka;

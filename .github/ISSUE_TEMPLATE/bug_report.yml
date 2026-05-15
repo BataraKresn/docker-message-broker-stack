@@ -1,0 +1,80 @@
+name: "🐛 Bug Report"
+description: Laporkan bug pada stack Redis/RabbitMQ/Kafka
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Terima kasih sudah melaporkan bug.
+        Mohon isi detail berikut agar investigasi lebih cepat.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Ringkasan masalah
+      description: Jelaskan bug secara singkat dan jelas.
+      placeholder: Contoh: Kafka broker gagal join quorum saat prod-up
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Development
+        - Production
+        - Monitoring
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Langkah reproduksi
+      description: Tuliskan langkah berurutan.
+      placeholder: |
+        1. Jalankan make prod-up
+        2. Cek log kafka-2
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Hasil yang diharapkan
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Hasil aktual
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log/Error terkait
+      description: Tempelkan log penting (tanpa secret).
+      render: shell
+
+  - type: input
+    id: compose
+    attributes:
+      label: File compose yang digunakan
+      placeholder: docker-compose.prod.yml + docker-compose.monitoring.yml
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Saya sudah mencoba langkah troubleshooting di docs/troubleshooting.md
+          required: true
+        - label: Saya memastikan tidak membagikan secret/password sensitif
+          required: true

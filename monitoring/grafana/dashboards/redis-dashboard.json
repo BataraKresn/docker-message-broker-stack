@@ -1,0 +1,20 @@
+{
+  "title": "Redis Dashboard Placeholder",
+  "uid": "redis-placeholder",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Redis Connected Clients",
+      "targets": [
+        {
+          "expr": "redis_connected_clients"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "redis-queue-example",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "ioredis": "^5.4.1"
+  },
+  "scripts": {
+    "producer": "node producer.js",
+    "worker": "node worker.js"
+  }
+}

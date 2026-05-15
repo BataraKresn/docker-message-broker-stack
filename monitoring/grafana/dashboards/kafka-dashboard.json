@@ -1,0 +1,20 @@
+{
+  "title": "Kafka Dashboard Placeholder",
+  "uid": "kafka-placeholder",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Kafka Broker Count",
+      "targets": [
+        {
+          "expr": "kafka_brokers"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+    }
+  ]
+}

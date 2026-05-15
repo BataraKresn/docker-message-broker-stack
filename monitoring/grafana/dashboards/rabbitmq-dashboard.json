@@ -1,0 +1,20 @@
+{
+  "title": "RabbitMQ Dashboard Placeholder",
+  "uid": "rabbitmq-placeholder",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "RabbitMQ Queue Messages Ready",
+      "targets": [
+        {
+          "expr": "rabbitmq_queue_messages_ready"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+name: ${COMPOSE_PROJECT_NAME:-message-broker-stack}-monitoring
+
+services:
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis-exporter
+    env_file:
+      - .env.prod
+    environment:
+      REDIS_ADDR: redis://redis-master:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    expose:
+      - "9121"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9121/metrics || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - monitoring_net
+      - broker_prod_net
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.7.0
+    container_name: kafka-exporter
+    command:
+      - --kafka.server=kafka-1:9092
+      - --kafka.server=kafka-2:9092
+      - --kafka.server=kafka-3:9092
+    expose:
+      - "9308"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9308/metrics || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - monitoring_net
+      - broker_prod_net
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9090/-/healthy || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+    networks:
+      - monitoring_net
+      - broker_prod_net
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3000/api/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+    networks:
+      - monitoring_net
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  monitoring_net:
+    name: monitoring_net
+    driver: bridge
+  broker_prod_net:
+    name: broker_prod_net
+    driver: bridge
