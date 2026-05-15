@@ -78,6 +78,7 @@ Stack menyediakan dua mode:
 Dokumen detail:
 
 - `docs/architecture.md`
+- `docs/capacity-planning.md`
 - `docs/redis.md`
 - `docs/rabbitmq.md`
 - `docs/kafka.md`
@@ -424,6 +425,7 @@ Alur yang direkomendasikan:
 ## Dokumen pendukung
 
 - `docs/architecture.md`
+- `docs/capacity-planning.md`
 - `docs/redis.md`
 - `docs/rabbitmq.md`
 - `docs/kafka.md`
