@@ -1,5 +1,12 @@
 blank_issues_enabled: false
 contact_links:
+  - name: GitHub Discussions (Q&A / ide)
+    url: https://github.com/BataraKresn/docker-message-broker-stack/discussions
+    about: Gunakan Discussions untuk tanya jawab, ide, dan diskusi desain.
+  - name: Support Policy
+    url: https://github.com/BataraKresn/docker-message-broker-stack/blob/main/SUPPORT.md
+    about: Baca kebijakan dukungan sebelum membuat issue.
   - name: Dokumentasi troubleshooting
-    url: https://github.com/your-org/docker-message-broker-stack/blob/main/docs/troubleshooting.md
+    url: https://github.com/BataraKresn/docker-message-broker-stack/blob/main/docs/troubleshooting.md
     about: Cek panduan troubleshooting sebelum membuat issue.
+
