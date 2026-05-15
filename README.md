@@ -399,12 +399,14 @@ CI memvalidasi konfigurasi:
 ## Release notes
 
 - Changelog utama: `CHANGELOG.md`
-- Detail rilis awal: `docs/releases/v1.0.0.md`
+- Detail rilis awal (bilingual ID+EN): `docs/releases/v1.0.0.md`
+- Template rilis berikutnya (bilingual ID+EN): `docs/releases/TEMPLATE.md`
 
 Rekomendasi untuk maintainers:
 
 - gunakan `CHANGELOG.md` sebagai sumber resmi perubahan,
-- salin ringkasan dari `docs/releases/<version>.md` saat membuat GitHub Release.
+- salin ringkasan dari `docs/releases/<version>.md` saat membuat GitHub Release,
+- pertahankan format bilingual agar ramah kontribusi global.
 
 ## Discussion & support policy
 
