@@ -212,7 +212,9 @@ Perintah umum:
 2. Ganti semua secret default (wajib)
 3. Validasi environment:
    - `./scripts/validate-env.sh prod`
-4. Jalankan:
+4. Hardening permission folder data (disarankan sebelum start):
+  - `make harden-data-prod`
+5. Jalankan:
    - `make prod-up`
 
 Perintah umum:
@@ -276,9 +278,12 @@ Prinsip:
 | `make test-redis` | Uji SET/GET, queue, stream Redis |
 | `make test-rabbitmq` | Uji publish/consume RabbitMQ |
 | `make test-kafka` | Uji topics + producer/consumer Kafka |
-| `make backup` | Backup named volume |
-| `make restore` | Restore named volume |
+| `make backup` | Backup folder bind mount `data/` |
+| `make restore` | Restore folder bind mount `data/` |
 | `make clean` | Bersihkan stack + volume compose |
+| `make harden-data-dev` | Hardening owner/mode folder `data/dev` |
+| `make harden-data-prod` | Hardening owner/mode folder `data/prod` + monitoring |
+| `make harden-data-all` | Hardening semua folder `data/` |
 
 ## Contoh penggunaan broker
 
@@ -357,6 +362,17 @@ Hardening lanjutan:
 - Kafka SASL/TLS untuk deployment multi-host
 - Docker secrets atau external secret manager
 
+Hardening permission bind mount:
+
+- Gunakan `./scripts/harden-data-permissions.sh [dev|prod|all]` atau target Makefile yang setara.
+- Script akan set owner UID/GID per service (default image):
+  - Redis: `999:999`
+  - RabbitMQ: `999:999`
+  - Kafka (Bitnami): `1001:1001`
+  - Prometheus: `65534:65534`
+  - Grafana: `472:472`
+- Untuk image custom, UID/GID dapat dioverride via environment variable (contoh `KAFKA_UID`, `KAFKA_GID`).
+
 ## Troubleshooting
 
 Lihat `docs/troubleshooting.md` untuk kasus:
@@ -408,6 +424,17 @@ Rekomendasi untuk maintainers:
 - gunakan `CHANGELOG.md` sebagai sumber resmi perubahan,
 - salin ringkasan dari `docs/releases/<version>.md` saat membuat GitHub Release,
 - pertahankan format bilingual agar ramah kontribusi global.
+
+## Stack Images
+
+Stack ini menggunakan beberapa image Docker untuk menjalankan layanan:
+
+- **Redis**: `redis:7.0`
+- **RabbitMQ**: `rabbitmq:3.11-management`
+- **Kafka**: `bitnamilegacy/kafka:4.0.0-debian-12-r10`
+
+> **Catatan Kafka:**
+> Kafka menggunakan image dari repository `bitnamilegacy` karena perubahan kebijakan Bitnami per Agustus 2025. Image ini tetap mendapatkan dukungan untuk versi lama melalui repository ini. Lihat [Bitnami Legacy Containers](https://github.com/bitnami/containers/issues/83267) untuk detail lebih lanjut.
 
 ## Discussion & support policy
 

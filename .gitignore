@@ -6,6 +6,9 @@
 # Backup artifacts
 backups/
 
+# Local runtime data from bind mounts
+data/
+
 # OS/editor artifacts
 .DS_Store
 Thumbs.db

@@ -15,7 +15,7 @@ services:
       - .env.dev
     volumes:
       - ./redis/dev/redis.conf:/usr/local/etc/redis/redis.conf:ro
-      - redis_dev_data:/data
+      - ./data/dev/redis:/data
     ports:
       - "6379:6379"
     healthcheck:
@@ -36,7 +36,7 @@ services:
     ports:
       - "5540:5540"
     volumes:
-      - redisinsight_dev_data:/data
+      - ./data/dev/redisinsight:/data
     healthcheck:
       test: ["CMD-SHELL", "wget --spider -q http://localhost:5540 || exit 1"]
       interval: 20s
@@ -60,7 +60,7 @@ services:
       - ./rabbitmq/dev/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitmq/dev/definitions.json:/etc/rabbitmq/definitions.json:ro
       - ./rabbitmq/dev/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
-      - rabbitmq_dev_data:/var/lib/rabbitmq
+      - ./data/dev/rabbitmq:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -75,13 +75,13 @@ services:
       - broker_dev_net
 
   kafka:
-    image: bitnami/kafka:3.7
+    image: confluentinc/cp-kafka:7.4.0
     container_name: kafka-dev
     env_file:
       - .env.dev
       - ./kafka/dev/kafka.env
     volumes:
-      - kafka_dev_data:/bitnami/kafka
+      - ./data/dev/kafka:/bitnami/kafka
     ports:
       - "9092:9092"
     healthcheck:
@@ -116,12 +116,6 @@ services:
     logging: *default-logging
     networks:
       - broker_dev_net
-
-volumes:
-  redis_dev_data:
-  redisinsight_dev_data:
-  rabbitmq_dev_data:
-  kafka_dev_data:
 
 networks:
   broker_dev_net:

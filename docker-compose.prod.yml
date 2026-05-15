@@ -18,7 +18,7 @@ services:
     env_file: [.env.prod]
     volumes:
       - ./redis/prod/redis-master.conf:/usr/local/etc/redis/redis.conf:ro
-      - redis_master_data:/data
+      - ./data/prod/redis-master:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
       interval: 10s
@@ -41,7 +41,7 @@ services:
         condition: service_healthy
     volumes:
       - ./redis/prod/redis-replica.conf:/usr/local/etc/redis/redis.conf:ro
-      - redis_replica_data:/data
+      - ./data/prod/redis-replica:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} INFO replication | grep -E 'role:slave|role:replica'"]
       interval: 10s
@@ -112,7 +112,7 @@ services:
       - ./rabbitmq/prod/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitmq/prod/definitions.json:/etc/rabbitmq/definitions.json:ro
       - ./rabbitmq/prod/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
-      - rabbitmq_1_data:/var/lib/rabbitmq
+      - ./data/prod/rabbitmq-1:/var/lib/rabbitmq
     expose:
       - "5672"
       - "15672"
@@ -141,7 +141,7 @@ services:
       - ./rabbitmq/prod/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitmq/prod/definitions.json:/etc/rabbitmq/definitions.json:ro
       - ./rabbitmq/prod/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
-      - rabbitmq_2_data:/var/lib/rabbitmq
+      - ./data/prod/rabbitmq-2:/var/lib/rabbitmq
     depends_on:
       rabbitmq-1:
         condition: service_healthy
@@ -176,7 +176,7 @@ services:
       - ./rabbitmq/prod/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitmq/prod/definitions.json:/etc/rabbitmq/definitions.json:ro
       - ./rabbitmq/prod/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
-      - rabbitmq_3_data:/var/lib/rabbitmq
+      - ./data/prod/rabbitmq-3:/var/lib/rabbitmq
     depends_on:
       rabbitmq-1:
         condition: service_healthy
@@ -222,14 +222,14 @@ services:
     tmpfs: [/run]
     <<: *default-security
 
-  kafka-1:
-    image: bitnami/kafka:3.7
-    container_name: kafka-1
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
     env_file:
       - .env.prod
       - ./kafka/prod/kafka-broker-1.env
     volumes:
-      - kafka_1_data:/bitnami/kafka
+      - ./data/prod/kafka-1:/bitnami/kafka
     expose: ["9092"]
     healthcheck:
       test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
@@ -242,58 +242,6 @@ services:
     mem_limit: 2g
     cpus: 1.50
     <<: *default-security
-
-  kafka-2:
-    image: bitnami/kafka:3.7
-    container_name: kafka-2
-    env_file:
-      - .env.prod
-      - ./kafka/prod/kafka-broker-2.env
-    volumes:
-      - kafka_2_data:/bitnami/kafka
-    expose: ["9092"]
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
-      interval: 20s
-      timeout: 10s
-      retries: 10
-    restart: unless-stopped
-    logging: *default-logging
-    networks: [broker_prod_net, monitoring_net]
-    mem_limit: 2g
-    cpus: 1.50
-    <<: *default-security
-
-  kafka-3:
-    image: bitnami/kafka:3.7
-    container_name: kafka-3
-    env_file:
-      - .env.prod
-      - ./kafka/prod/kafka-broker-3.env
-    volumes:
-      - kafka_3_data:/bitnami/kafka
-    expose: ["9092"]
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
-      interval: 20s
-      timeout: 10s
-      retries: 10
-    restart: unless-stopped
-    logging: *default-logging
-    networks: [broker_prod_net, monitoring_net]
-    mem_limit: 2g
-    cpus: 1.50
-    <<: *default-security
-
-volumes:
-  redis_master_data:
-  redis_replica_data:
-  rabbitmq_1_data:
-  rabbitmq_2_data:
-  rabbitmq_3_data:
-  kafka_1_data:
-  kafka_2_data:
-  kafka_3_data:
 
 networks:
   broker_prod_net:
