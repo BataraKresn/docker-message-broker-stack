@@ -1,6 +1,6 @@
-# docker-message-broker-stack
+# Docker Message Broker Stack
 
-[![CI](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/ci.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions) 
+[![CI Compose Lint](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/ci-compose-lint.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
 [![Docker Compose](https://img.shields.io/badge/docker--compose-yes-blue)](https://docs.docker.com/compose/) 
 [![Production Ready](https://img.shields.io/badge/production--ready-yes-brightgreen)](#)
