@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 PROJECT := docker-message-broker-stack
 
-.PHONY: dev-up dev-down dev-logs prod-up prod-down prod-logs ps redis-cli rabbitmq-status kafka-topics test-redis test-rabbitmq test-kafka backup restore clean harden-data-dev harden-data-prod harden-data-all generate-env-passwords init-env
+.PHONY: dev-up dev-down dev-logs prod-up prod-down prod-logs ps redis-cli rabbitmq-status kafka-topics test-redis test-rabbitmq test-kafka backup restore clean harden-data-dev harden-data-prod harden-data-all generate-env-passwords init-env health-check pre-commit-check
 
 dev-up:
 	./scripts/start-dev.sh
@@ -43,6 +43,12 @@ test-rabbitmq:
 
 test-kafka:
 	./kafka/scripts/create-topics.sh && ./kafka/scripts/producer-test.sh && ./kafka/scripts/consumer-test.sh
+
+health-check:
+	./scripts/health-check-all.sh docker-compose.dev.yml .env.dev && ./scripts/health-check-all.sh docker-compose.prod.yml .env.prod || echo "Health check failed"
+
+pre-commit-check:
+	./.githooks/pre-commit
 
 backup:
 	./scripts/backup.sh

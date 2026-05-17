@@ -1,9 +1,12 @@
 # Docker Message Broker Stack
 
-[![CI Compose Lint](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/ci-compose-lint.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
-[![Docker Compose](https://img.shields.io/badge/docker--compose-yes-blue)](https://docs.docker.com/compose/) 
+[![CI Compose Lint](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/ci-compose-lint.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions)
+[![Security Scan](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/security-scan.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Docker Compose](https://img.shields.io/badge/docker--compose-yes-blue)](https://docs.docker.com/compose/)
 [![Production Ready](https://img.shields.io/badge/production--ready-yes-brightgreen)](#)
+[![Language: Shell](https://img.shields.io/badge/shell_script-%23121011.svg?style=flat&logo=gnu-bash)](scripts/)
+[![Language: YAML](https://img.shields.io/badge/YAML-%23CB171E.svg?style=flat&logo=yaml)](docker-compose.dev.yml)
 
 Template infrastruktur **production-ready** berbasis Docker Compose untuk tiga broker utama:
 
@@ -28,20 +31,23 @@ Repository ini disiapkan sebagai baseline DevOps/SRE yang:
 4. [Diagram Mermaid](#diagram-mermaid)
 5. [Struktur repository](#struktur-repository)
 6. [Prerequisites](#prerequisites)
-7. [Quick start development](#quick-start-development)
-8. [Quick start production](#quick-start-production)
-9. [Environment variables](#environment-variables)
-10. [Port mapping](#port-mapping)
-11. [Perintah Makefile](#perintah-makefile)
-12. [Contoh penggunaan broker](#contoh-penggunaan-broker)
-13. [Monitoring](#monitoring)
-14. [Backup & restore](#backup--restore)
-15. [Security notes](#security-notes)
-16. [Troubleshooting](#troubleshooting)
-17. [Production checklist](#production-checklist)
-18. [CI/CD GitHub](#cicd-github)
-19. [Release notes](#release-notes)
-20. [Discussion & support policy](#discussion--support-policy)
+7. [Getting Started (step-by-step)](#getting-started-step-by-step)
+8. [Quick start development](#quick-start-development)
+9. [Quick start production](#quick-start-production)
+10. [Environment variables](#environment-variables)
+11. [Port mapping](#port-mapping)
+12. [Health Check](#health-check)
+13. [Perintah Makefile](#perintah-makefile)
+14. [Contoh penggunaan broker](#contoh-penggunaan-broker)
+15. [Monitoring](#monitoring)
+16. [Backup & restore](#backup--restore)
+17. [Security notes](#security-notes)
+18. [Troubleshooting](#troubleshooting)
+19. [FAQ](#faq)
+20. [Production checklist](#production-checklist)
+21. [CI/CD GitHub](#cicd-github)
+22. [Release notes](#release-notes)
+23. [Discussion & support policy](#discussion--support-policy)
 
 ---
 
@@ -196,6 +202,66 @@ Rekomendasi resource:
 - Dev: minimal 4 GB RAM
 - Prod baseline: minimal 8 GB RAM
 
+## Getting Started (step-by-step)
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/BataraKresn/docker-message-broker-stack.git
+cd docker-message-broker-stack
+```
+
+### 2. Initialize Environment Files
+
+```bash
+# Copy env files from examples
+make init-env
+
+# Generate strong random secrets
+make generate-env-passwords
+```
+
+### 3. Validate Configuration
+
+```bash
+# Dev environment
+docker compose -f docker-compose.dev.yml --env-file .env.dev config
+
+# Prod environment
+docker compose -f docker-compose.prod.yml --env-file .env.prod config
+```
+
+### 4. Start Services
+
+**For Development:**
+```bash
+make dev-up
+```
+
+**For Production (with monitoring):**
+```bash
+make harden-data-prod  # Hardening permissions (recommended)
+make prod-up
+```
+
+### 5. Verify Health
+
+```bash
+# Check all services
+make health-check
+
+# View logs
+make dev-logs  # or make prod-logs
+```
+
+### 6. Run Tests
+
+```bash
+make test-redis       # Test Redis
+make test-rabbitmq    # Test RabbitMQ
+make test-kafka       # Test Kafka
+```
+
 ## Quick start development
 
 1. Inisialisasi env dev (sekali saja):
@@ -269,10 +335,33 @@ Prinsip:
 
 `Redis` dan `Kafka` tidak diekspos public secara default.
 
+## Health Check
+
+Gunakan script health check untuk memverifikasi semua services berjalan dengan baik:
+
+```bash
+# Development
+./scripts/health-check-all.sh docker-compose.dev.yml .env.dev
+
+# Production
+./scripts/health-check-all.sh docker-compose.prod.yml .env.prod
+
+# Atau gunakan Makefile
+make health-check
+```
+
+Script ini akan memeriksa:
+- Redis connectivity dan ping
+- RabbitMQ cluster status
+- Kafka broker availability
+- Semua container berjalan
+
 ## Perintah Makefile
 
 | Command | Kegunaan |
 |---|---|
+| `make init-env` | Salin .env.dev/prod dari template (jalankan pertama kali) |
+| `make generate-env-passwords` | Generate strong random secrets ke .env.dev/prod |
 | `make dev-up` | Start stack development |
 | `make dev-down` | Stop stack development |
 | `make dev-logs` | Log stack development |
@@ -280,6 +369,8 @@ Prinsip:
 | `make prod-down` | Stop stack production + monitoring |
 | `make prod-logs` | Log stack production |
 | `make ps` | Cek status container |
+| `make health-check` | Health check semua services (dev + prod) |
+| `make pre-commit-check` | Jalankan pre-commit validation |
 | `make redis-cli` | Masuk redis-cli dengan auth |
 | `make rabbitmq-status` | Cek status cluster RabbitMQ |
 | `make kafka-topics` | List Kafka topics |
@@ -394,6 +485,83 @@ Lihat `docs/troubleshooting.md` untuk kasus:
 - Kafka consumer tidak menerima message
 - Port conflict / already allocated
 - Permission denied pada volume
+
+## FAQ
+
+### Q: Bagaimana cara backup dan restore data?
+
+A: Gunakan perintah Makefile:
+```bash
+make backup    # Backup ke ./data/.backup-<timestamp>.tar.gz
+make restore   # Restore dari backup terakhir
+```
+Atau jalankan script secara langsung:
+```bash
+./scripts/backup.sh
+./scripts/restore.sh
+```
+
+### Q: Kafka image menggunakan `bitnamilegacy`, apakah aman untuk production?
+
+A: Ya, `confluentinc/cp-kafka:7.4.0` adalah image resmi dari Confluent (creator Kafka) dan mendapat update security secara berkala. Image ini lebih stabil dan recommended untuk production dibanding Bitnami.
+
+### Q: Bagaimana cara mengubah password Redis/RabbitMQ/Grafana?
+
+A: Edit file `.env.dev` atau `.env.prod`, ubah nilai password, kemudian:
+```bash
+make dev-down
+make dev-up
+```
+Password baru akan digunakan saat container startup.
+
+### Q: Berapa lama retention data Kafka default?
+
+A: Default `KAFKA_RETENTION_HOURS=24` untuk dev dan `KAFKA_RETENTION_HOURS=168` (7 hari) untuk prod. Ubah di `.env` sesuai kebutuhan.
+
+### Q: Bagaimana cara scale RabbitMQ/Kafka ke lebih banyak node?
+
+A: Edit `docker-compose.prod.yml`, tambah service baru (misal `rabbitmq-4`), update `RABBITMQ_CLUSTER_NODES` atau gunakan auto-discovery. Dokumentasi detail ada di `docs/production-hardening.md`.
+
+### Q: Health check bisa dijalankan otomatis?
+
+A: Ya! Gunakan `make health-check` atau setup Kubernetes liveness/readiness probe yang memanggil script `./scripts/health-check-all.sh`.
+
+### Q: Bagaimana cara setup pre-commit hooks?
+
+A: Pre-commit hooks sudah tersedia di `.githooks/pre-commit`. Untuk mengaktifkan:
+```bash
+git config core.hooksPath .githooks
+# Atau jalankan manual
+make pre-commit-check
+```
+
+### Q: Apa saja yang dicek pre-commit?
+
+A: Pre-commit hook memvalidasi:
+- Syntax shell scripts (`.sh` files)
+- Konfigurasi docker-compose (dev, prod, monitoring)
+- Kehadiran `.env` files (warning saja, tidak fail)
+
+### Q: Bagaimana cara integrate stack ini dengan Kubernetes?
+
+A: Stack ini dirancang untuk Docker Compose. Untuk Kubernetes, konversi compose ke Helm charts atau Kustomize menggunakan tools seperti `kompose`. Contoh:
+```bash
+kompose convert -f docker-compose.prod.yml
+```
+
+### Q: Support untuk multi-host deployment?
+
+A: Ya, gunakan Docker Swarm atau Kubernetes. Dokumentasi detail untuk Swarm ada di `docs/architecture.md`. Untuk production multi-host, pastikan:
+- Network connectivity antar node lancar
+- Shared storage atau bind mounts tersedia
+- Security: TLS + SASL/RBAC aktif
+
+### Q: Bagaimana memantau performance broker?
+
+A: Production stack include Prometheus + Grafana. Akses:
+- Grafana: `http://localhost:3000` (admin / default password)
+- Prometheus: `http://localhost:9090`
+- Dashboard sudah pre-provisioned untuk Kafka, RabbitMQ, Redis
 
 ## Production checklist
 
