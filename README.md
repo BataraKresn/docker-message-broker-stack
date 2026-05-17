@@ -1,5 +1,10 @@
 # docker-message-broker-stack
 
+[![CI](https://github.com/BataraKresn/docker-message-broker-stack/actions/workflows/ci.yml/badge.svg)](https://github.com/BataraKresn/docker-message-broker-stack/actions) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
+[![Docker Compose](https://img.shields.io/badge/docker--compose-yes-blue)](https://docs.docker.com/compose/) 
+[![Production Ready](https://img.shields.io/badge/production--ready-yes-brightgreen)](#)
+
 Template infrastruktur **production-ready** berbasis Docker Compose untuk tiga broker utama:
 
 - **Redis** → cache, simple queue, background jobs
@@ -193,9 +198,10 @@ Rekomendasi resource:
 
 ## Quick start development
 
-1. Copy env dev:
-   - `.env.dev.example` → `.env.dev`
-2. Ganti semua secret default
+1. Inisialisasi env dev (sekali saja):
+   - `make init-env`
+2. Generate password random (opsional, aman untuk production):
+   - `make generate-env-passwords`
 3. Jalankan:
    - `make dev-up`
 
@@ -207,9 +213,10 @@ Perintah umum:
 
 ## Quick start production
 
-1. Copy env prod:
-   - `.env.prod.example` → `.env.prod`
-2. Ganti semua secret default (wajib)
+1. Inisialisasi env prod (sekali saja):
+   - `make init-env`
+2. Generate password random (wajib untuk production!):
+   - `make generate-env-passwords`
 3. Validasi environment:
    - `./scripts/validate-env.sh prod`
 4. Hardening permission folder data (disarankan sebelum start):
@@ -228,9 +235,10 @@ Perintah umum:
 
 Template tersedia di:
 
-- `.env.example`
-- `.env.dev.example`
-- `.env.prod.example`
+- `.env.dev.example` → `.env.dev`
+- `.env.prod.example` → `.env.prod`
+
+Gunakan perintah `make init-env` untuk menyalin file template jika file `.env` belum ada. Setelah itu, gunakan `make generate-env-passwords` untuk mengisi secret random yang kuat.
 
 Prinsip:
 

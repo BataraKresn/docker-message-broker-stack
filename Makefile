@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 PROJECT := docker-message-broker-stack
 
-.PHONY: dev-up dev-down dev-logs prod-up prod-down prod-logs ps redis-cli rabbitmq-status kafka-topics test-redis test-rabbitmq test-kafka backup restore clean harden-data-dev harden-data-prod harden-data-all
+.PHONY: dev-up dev-down dev-logs prod-up prod-down prod-logs ps redis-cli rabbitmq-status kafka-topics test-redis test-rabbitmq test-kafka backup restore clean harden-data-dev harden-data-prod harden-data-all generate-env-passwords init-env
 
 dev-up:
 	./scripts/start-dev.sh
@@ -61,3 +61,9 @@ harden-data-prod:
 
 harden-data-all:
 	./scripts/harden-data-permissions.sh all
+
+generate-env-passwords: init-env
+	./scripts/generate-env-passwords.sh
+
+init-env:
+	./scripts/init-env.sh
